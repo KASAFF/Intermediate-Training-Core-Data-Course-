@@ -7,6 +7,7 @@
 
 import CoreData
 
+
 struct CoreDataManager {
 
     static let shared = CoreDataManager() // will live forever as long as your application is still alive, its properties will to
@@ -21,5 +22,35 @@ struct CoreDataManager {
         return container
     }()
 
+    func fetchCompanies() -> [Company] {
+        let context = persistentContainer.viewContext
+
+        let fetchRequest = NSFetchRequest<Company>(entityName: "Company")
+        do {
+            let companies = try context.fetch(fetchRequest)
+
+            return companies
+
+        } catch let fetchErr {
+            print("Failed to fetch companies", fetchErr)
+            return []
+        }
+    }
+    func createEmployee(employeeName: String) -> (Employee?,Error?) {
+        let context = persistentContainer.viewContext
+        // create an employee
+
+        let employee = NSEntityDescription.insertNewObject(forEntityName: "Employee", into: context) as! Employee
+
+        employee.setValue(employeeName, forKey: "name")
+        do {
+            try context.save()
+            return (employee, nil)
+        } catch let err {
+            print("Failed to create employee:", err)
+            return (nil, err)
+        }
+
+    }
     
 }
