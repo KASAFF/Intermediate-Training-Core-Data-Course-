@@ -17,7 +17,6 @@ class CompanyCell: UITableViewCell {
             }
 
             if let name = company?.name, let founded = company?.founded {
-
                 let dateFromatter = DateFormatter()
                 dateFromatter.dateFormat = "MMM dd, yyyy"
                 let foundedDateString = dateFromatter.string(from: founded)
