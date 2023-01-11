@@ -2,19 +2,19 @@
 //  CoreDataManager.swift
 //  IntermediateTraining
 //
-//  Created by Aleksey Kosov on 10.01.2023.
+//  Created by Brian Voong on 10/24/17.
+//  Copyright © 2017 Lets Build That App. All rights reserved.
 //
 
 import CoreData
 
-
 struct CoreDataManager {
 
-    static let shared = CoreDataManager() // will live forever as long as your application is still alive, its properties will to
+    static let shared = CoreDataManager() // will live forever as long as your application is still alive, it's properties will too
 
     let persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "IntermediateTrainingModels")
-        container.loadPersistentStores { storeDescription, err in
+        container.loadPersistentStores { (storeDescription, err) in
             if let err = err {
                 fatalError("Loading of store failed: \(err)")
             }
@@ -28,26 +28,27 @@ struct CoreDataManager {
         let fetchRequest = NSFetchRequest<Company>(entityName: "Company")
         do {
             let companies = try context.fetch(fetchRequest)
-
             return companies
-
         } catch let fetchErr {
-            print("Failed to fetch companies", fetchErr)
+            print("Failed to fetch companies:", fetchErr)
             return []
         }
     }
-    func createEmployee(employeeName: String, birthday: Date, company: Company) -> (Employee?,Error?) {
-        let context = persistentContainer.viewContext
-        // create an employee
 
+    func createEmployee(employeeName: String, employeeType: String, birthday: Date, company: Company) -> (Employee?, Error?) {
+        let context = persistentContainer.viewContext
+
+        //create an employee
         let employee = NSEntityDescription.insertNewObject(forEntityName: "Employee", into: context) as! Employee
 
         employee.company = company
+        employee.type = employeeType
 
+        // lets check company is setup correctly
 //        let company = Company(context: context)
 //        company.employees
 //
-//        employee.c
+//        employee.company
 
         employee.setValue(employeeName, forKey: "name")
 
@@ -56,11 +57,13 @@ struct CoreDataManager {
         employeeInformation.taxId = "456"
         employeeInformation.birthday = birthday
 
-      //  employeeInformation.setValue("456", forKey: "taxId")
+//        employeeInformation.setValue("456", forKey: "taxId")
+
         employee.employeeInformation = employeeInformation
 
         do {
             try context.save()
+            // save succeeds
             return (employee, nil)
         } catch let err {
             print("Failed to create employee:", err)
@@ -68,5 +71,14 @@ struct CoreDataManager {
         }
 
     }
-    
+
 }
+
+
+
+
+
+
+
+
+
